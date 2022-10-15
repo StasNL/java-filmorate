@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controllers;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
@@ -12,16 +11,20 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@Getter
 @RequestMapping("/users")
 public class UserController {
-
-    int userId;
-    HashMap<Integer, User> users = new HashMap<>();
+    private int userId;
+    private HashMap<Integer, User> users = new HashMap<>();
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {
-        User userToMemory = user.create(++userId);
+        User userToMemory = User.builder()
+                .email(user.getEmail())
+                .login(user.getLogin())
+                .birthday(user.getBirthday())
+                .name(user.checkName())
+                .id(++userId)
+                .build();
         users.put(userToMemory.getId(), userToMemory);
         log.info("Пользователь успешно зарегистрирован.");
         return userToMemory;
@@ -29,14 +32,13 @@ public class UserController {
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        User userToMemory;
         if (users.containsKey(user.getId())) {
-            userToMemory = users.get(user.getId()).update(user);
+            users.put(user.getId(), user);
             log.info("Информация о пользователе успешно обновлена");
         } else {
             throw new RuntimeException("Пользователь не зарегистрирован");
         }
-        return userToMemory;
+        return user;
     }
 
     @GetMapping

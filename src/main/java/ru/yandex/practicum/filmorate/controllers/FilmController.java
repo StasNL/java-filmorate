@@ -1,5 +1,4 @@
 package ru.yandex.practicum.filmorate.controllers;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -12,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 @Slf4j
-@Getter
 public class FilmController {
 
     private int filmId;
@@ -20,7 +18,13 @@ public class FilmController {
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
-        Film filmToMemory = film.create(++filmId);
+        Film filmToMemory = Film.builder()
+                .name(film.getName())
+                .description(film.getDescription())
+                .releaseDate(film.getReleaseDate())
+                .duration(film.getDuration())
+                .id(++filmId)
+                .build();
         films.put(filmToMemory.getId(), filmToMemory);
         log.info("Фильм успешно добавлен");
         return filmToMemory;
@@ -28,15 +32,14 @@ public class FilmController {
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
-        Film filmToMemory;
         if(films.containsKey(film.getId())) {
-            filmToMemory = films.get(filmId).update(film);
+            films.put(film.getId(), film);
             log.info("Обновление фильма прошло успешно");
         }
         else {
             throw new RuntimeException("Фильм отсутствует в библиотеке.");
         }
-        return filmToMemory;
+        return film;
     }
 
     @GetMapping

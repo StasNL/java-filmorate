@@ -3,15 +3,15 @@ package ru.yandex.practicum.filmorate.model;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.yandex.practicum.filmorate.annotations.DateAfter;
 
 import javax.validation.constraints.*;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Film {
     public final static String PATTERN_FOR_TIME = "dd.MM.yyyy";
@@ -33,22 +33,4 @@ public class Film {
     @NonNull
     @Positive(message = "Duration should be positive natural digit.")
     private int duration;
-
-    public void setReleaseDate(String date) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(PATTERN_FOR_TIME);
-        this.releaseDate = LocalDate.parse(date, dtf);
-    }
-
-    public Film update(Film film) {
-        this.name = film.name;
-        this.description = film.description;
-        this.releaseDate = film.releaseDate;
-        this.duration = film.duration;
-        return this;
-    }
-
-    public Film create(int filmId) {
-        this.id = filmId;
-        return this;
-    }
 }
