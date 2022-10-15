@@ -1,10 +1,8 @@
 package ru.yandex.practicum.filmorate.validationTests;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
-import ru.yandex.practicum.filmorate.controllers.FilmController;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.*;
@@ -15,13 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FilmValidationTest {
-
-    static FilmController filmController;
-
-    @BeforeEach
-    void createFilmController() {
-        filmController = new FilmController();
-    }
 
 //    Суть тестов состоит в том, чтобы отлавливать ошибку валидации и считывать сообщение,
 //    в котором описано поле, содержащее ошибку

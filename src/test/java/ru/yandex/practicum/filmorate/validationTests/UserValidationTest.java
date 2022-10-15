@@ -14,12 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UserValidationTest {
-    static UserController userController;
-
-    @BeforeEach
-    void createUserController() {
-        userController = new UserController();
-    }
 
 //    Суть тестов состоит в том, чтобы отлавливать ошибку валидации и считывать сообщение,
 //    в котором описано поле, содержащее ошибку
@@ -74,24 +68,6 @@ public class UserValidationTest {
         Throwable thrown = assertThrows(ConstraintViolationException.class, () -> validate(user));
         String errorMessage = thrown.getMessage().split(":")[1].trim();
         assertEquals("Login shouldn't contain spaces", errorMessage);
-    }
-
-    @Test
-    void shouldUseLoginInsteadNameIfNameEmptyOrNull() {
-        User user = User.builder()
-                .email("mail@mail.ru")
-                .birthday(LocalDate.of(1985, 12, 1))
-                .login("login")
-                .build();
-        userController.addUser(user);
-        user.setName("");
-        int id = 1;
-        User userCreated = userController.getUsers().get(id);
-        userController.updateUser(user);
-        User userUpdated = userController.getUsers().get(id);
-
-        assertEquals(user.getLogin(), userCreated.getName());
-        assertEquals(user.getLogin(), userUpdated.getName());
     }
 
     @Test
