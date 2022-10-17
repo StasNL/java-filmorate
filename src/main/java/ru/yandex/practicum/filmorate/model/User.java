@@ -12,7 +12,6 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 @Builder
 public class User {
-    public final static String PATTERN_FOR_TIME = "dd.MM.yyyy";
     @NonNull
     private int id;
 

@@ -14,7 +14,7 @@ public class DateAfterValidator implements ConstraintValidator<DateAfter, LocalD
 
     @Override
     public void initialize(DateAfter date) {
-        String patternForTime = Film.PATTERN_FOR_TIME;
+        String patternForTime = "dd.MM.yyyy";
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(patternForTime);
         this.dateToCompare = LocalDate.parse(date.date(), dtf);
 

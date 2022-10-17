@@ -1,10 +1,8 @@
 package ru.yandex.practicum.filmorate.model;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import ru.yandex.practicum.filmorate.annotations.DateAfter;
 
 import javax.validation.constraints.*;
@@ -14,7 +12,6 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 @Builder
 public class Film {
-    public final static String PATTERN_FOR_TIME = "dd.MM.yyyy";
 
     private int id;
 
