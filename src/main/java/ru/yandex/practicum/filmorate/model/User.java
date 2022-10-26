@@ -1,11 +1,12 @@
 package ru.yandex.practicum.filmorate.model;
 
-import java.time.LocalDate;
-
 import lombok.*;
 import ru.yandex.practicum.filmorate.annotations.NotWhiteSpace;
 
 import javax.validation.constraints.*;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -13,7 +14,8 @@ import javax.validation.constraints.*;
 @Builder
 public class User {
     @NonNull
-    private int id;
+    @PositiveOrZero
+    private long id;
 
     @NonNull
     @NotEmpty(message = "email shouldn't be empty")
@@ -28,6 +30,8 @@ public class User {
     @NonNull
     @PastOrPresent(message = "Birthday shouldn't be in the future")
     private LocalDate birthday;
+
+    private final Set<Long> friends = new HashSet<>();
 
     private String name;
 
