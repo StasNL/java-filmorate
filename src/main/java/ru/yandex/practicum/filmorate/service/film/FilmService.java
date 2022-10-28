@@ -19,7 +19,7 @@ public class FilmService {
     FilmStorage filmStorage;
 
     @Autowired
-    public FilmService(InMemoryFilmStorage filmStorage) {
+    public FilmService(FilmStorage filmStorage) {
         this.filmStorage = filmStorage;
     }
 

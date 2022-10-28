@@ -14,7 +14,7 @@ public class UserService {
     UserStorage userStorage;
 
     @Autowired
-    public UserService(InMemoryUserStorage userStorage) {
+    public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
