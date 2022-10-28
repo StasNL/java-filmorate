@@ -17,6 +17,7 @@ import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorTy
 public class InMemoryUserStorage implements UserStorage {
     private int userId;
     private final HashMap<Long, User> users = new HashMap<>();
+
     @Override
     public User add(User user) {
         User userToMemory = User.builder()
