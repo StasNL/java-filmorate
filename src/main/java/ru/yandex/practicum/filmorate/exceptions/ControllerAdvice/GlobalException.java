@@ -7,14 +7,16 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
 @Slf4j
-public class ValidationException {
+public class GlobalException {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -25,14 +27,14 @@ public class ValidationException {
         final List<Error> errors = e.getBindingResult().getFieldErrors().stream()
                 .map(error -> new Error(error.getField(), error.getDefaultMessage()))
                 .collect(Collectors.toList());
-        log.info(e.getFieldError().getDefaultMessage());
+        log.info(Objects.requireNonNull(e.getFieldError()).getDefaultMessage());
         return new ValidationExceptionResponse(errors);
     }
 
-    @ExceptionHandler(NullPointerException.class)
+    @ExceptionHandler({NullPointerException.class, IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public List<String> onNullPointerException(NullPointerException e) {
+    public List<String> onNullPointerException(RuntimeException e) {
         final List<String> npe = new ArrayList<>();
         npe.add(e.getMessage());
         log.info(e.getMessage());
@@ -49,13 +51,13 @@ public class ValidationException {
         return re;
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public List<String> onIllegalArgumentException(IllegalArgumentException e) {
-        final List<String> re = new ArrayList<>();
-        re.add(e.getMessage());
+    public List<String> onNotFoundException(NotFoundException e) {
+        final List<String> nfe = new ArrayList<>();
+        nfe.add(e.getMessage());
         log.info(e.getMessage());
-        return re;
+        return nfe;
     }
 }

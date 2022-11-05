@@ -1,11 +1,15 @@
 package ru.yandex.practicum.filmorate.model;
 
-import java.time.LocalDate;
-
 import lombok.*;
 import ru.yandex.practicum.filmorate.annotations.DateAfter;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -13,7 +17,9 @@ import javax.validation.constraints.*;
 @Builder
 public class Film {
 
-    private int id;
+    @NonNull
+    @PositiveOrZero
+    private long id;
 
     @NonNull
     @NotBlank(message = "Name should contain at least one character.")
@@ -30,4 +36,6 @@ public class Film {
     @NonNull
     @Positive(message = "Duration should be positive natural digit.")
     private int duration;
+
+    private final Set<Long> likedUsers = new HashSet<>();
 }
