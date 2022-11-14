@@ -1,12 +1,13 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
+import org.springframework.lang.Nullable;
+import ru.yandex.practicum.filmorate.annotations.CorrectFriendStatus;
 import ru.yandex.practicum.filmorate.annotations.NotWhiteSpace;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -16,6 +17,8 @@ public class User {
     @NonNull
     @PositiveOrZero
     private long id;
+
+    private String name;
 
     @NonNull
     @NotEmpty(message = "email shouldn't be empty")
@@ -31,12 +34,12 @@ public class User {
     @PastOrPresent(message = "Birthday shouldn't be in the future")
     private LocalDate birthday;
 
-    private final Set<Long> friends = new HashSet<>();
-
-    private String name;
+    private Map<Long,
+            @CorrectFriendStatus(message = "Kinds of relations: Subscribed, Subscription and friend")
+                    String> relations = new HashMap<>();
 
     public String checkName() {
-        if(name == null || name.isEmpty()) {
+        if (name == null || name.isEmpty()) {
             name = login;
         }
         return name;

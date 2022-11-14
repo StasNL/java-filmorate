@@ -14,6 +14,8 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.yandex.practicum.filmorate.model.utils.Genre.COMEDY;
+import static ru.yandex.practicum.filmorate.model.utils.Rating.PG13;
 
 public class FilmServiceTest {
 
@@ -53,6 +55,8 @@ public class FilmServiceTest {
                 .description("Updated film")
                 .duration(90)
                 .releaseDate(LocalDate.of(1985, 12, 1))
+                .genre(COMEDY.getGenre())
+                .rating(PG13.getRating())
                 .build();
 
         filmService.update(updateTestFilm);
@@ -115,8 +119,8 @@ public class FilmServiceTest {
         filmService.addLike(1L, 5L);
 
         Film filmFromMemory = filmService.findFilm(1L);
-        long userId = (long) filmFromMemory.getLikedUsers().toArray()[0];
-        int likesAmount = filmFromMemory.getLikedUsers().size();
+        long userId = (long) filmFromMemory.getLikes().toArray()[0];
+        int likesAmount = filmFromMemory.getLikes().size();
 
         assertEquals(1, likesAmount);
         assertEquals(5, userId);
@@ -135,8 +139,8 @@ public class FilmServiceTest {
 
         Film filmFromMemory = filmService.findFilm(1L);
 
-        long userId = (long) filmFromMemory.getLikedUsers().toArray()[0];
-        int likesAmount = filmFromMemory.getLikedUsers().size();
+        long userId = (long) filmFromMemory.getLikes().toArray()[0];
+        int likesAmount = filmFromMemory.getLikes().size();
 
         assertEquals(1, likesAmount);
         assertEquals(666, userId);
@@ -165,7 +169,7 @@ public class FilmServiceTest {
 //     Сортируем все фильмы по количеству лайков для проверки.
         List<Film> films = filmService.getAll();
         List<Film> likesAmount = films.stream()
-                .sorted(Comparator.comparingInt(film -> -film.getLikedUsers().size()))
+                .sorted(Comparator.comparingInt(film -> -film.getLikes().size()))
                 .collect(Collectors.toList());
 
 //     Проверяем количество полученных фильмов и сверяем с полученным ранее списком.
@@ -183,6 +187,8 @@ public class FilmServiceTest {
                 .description("Film for test")
                 .duration(90)
                 .releaseDate(LocalDate.of(1985, 12, 1))
+                .genre(COMEDY.getGenre())
+                .rating(PG13.getRating())
                 .build();
     }
 }

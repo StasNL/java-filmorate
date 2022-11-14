@@ -2,15 +2,17 @@ package ru.yandex.practicum.filmorate.ServiceTests;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.yandex.practicum.filmorate.model.utils.FriendStatus.*;
 
 class UserServiceTest {
 
@@ -83,57 +85,80 @@ class UserServiceTest {
         User user1 = userService.addUser(createUser("User1 for addFriend test."));
         User user2 = userService.addUser(createUser("Friend"));
 
+//     Подписка user1 на user2
         userService.addFriend(1L, 2L);
 
-        assertEquals(1, user1.getFriends().size());
-        assertEquals(1, user2.getFriends().size());
+        assertEquals(1, user1.getRelations().size());
+        assertEquals(1, user2.getRelations().size());
+        assertEquals(SUBSCRIPTION.getStatus(), user1.getRelations().get(2L));
+        assertEquals(SUBSCRIBER.getStatus(), user2.getRelations().get(1L));
+//     Взаимная дружба
+       userService.addFriend(2L, 1L);
 
-        long id1Friend = (long) user1.getFriends().toArray()[0];
-        long id2Friend = (long) user2.getFriends().toArray()[0];
-        assertEquals(user2, userService.findUser(id1Friend));
-        assertEquals(user1, userService.findUser(id2Friend));
+        assertEquals(1, user1.getRelations().size());
+        assertEquals(1, user2.getRelations().size());
+        assertEquals(FRIEND.getStatus(), user1.getRelations().get(2L));
+        assertEquals(FRIEND.getStatus(), user2.getRelations().get(1L));
     }
 
     @Test
     void removeFriend() {
         User user1 = userService.addUser(createUser("User1 for remove Friend test."));
         User user2 = userService.addUser(createUser("Friend"));
-
+//     Удаление из подписок
         userService.addFriend(1L, 2L);
-        userService.removeFriend(2L, 1L);
+        userService.removeFriend(1L, 2L);
 
-        assertEquals(0, user1.getFriends().size());
-        assertEquals(0, user2.getFriends().size());
+        assertEquals(0, user1.getRelations().size());
+        assertEquals(0, user2.getRelations().size());
+
+//     Удаление из друзей
+        userService.addFriend(1L, 2L);
+        userService.addFriend(2L, 1L);
+        userService.removeFriend(1L, 2L);
+//     Пользователь должен остаться, но в качестве подписчика
+        assertEquals(1, user1.getRelations().size());
+        assertEquals(1, user2.getRelations().size());
+        assertEquals(SUBSCRIBER.getStatus(), user1.getRelations().get(2L));
+        assertEquals(SUBSCRIPTION.getStatus(), user2.getRelations().get(1L));
     }
 
     @Test
     void getFriends() {
-        User user1 = userService.addUser(createUser("User1 for remove Friend test."));
+        User user1 = userService.addUser(createUser("User1."));
         User friend1 = userService.addUser(createUser("Friend1"));
         User friend2 = userService.addUser(createUser("Friend2"));
-
+//     Взаимный друг
         userService.addFriend(user1.getId(), friend1.getId());
+        userService.addFriend(friend1.getId(), user1.getId());
+//     Подписка
         userService.addFriend(user1.getId(), friend2.getId());
 
         List<User> friends = userService.getFriends(user1.getId());
-
+//     Должен вывести только друга
+        assertEquals(1, friends.size());
         assertEquals(friend1, friends.get(0));
-        assertEquals(friend2, friends.get(1));
     }
 
     @Test
     void getCommonFriends() {
-        User user1 = userService.addUser(createUser("User1 for remove Friend test."));
-        User friend1 = userService.addUser(createUser("Friend1"));
-        User friend2 = userService.addUser(createUser("Friend2"));
+        User user1 = userService.addUser(createUser("User1."));
+        User user2 = userService.addUser(createUser("User2"));
+        User user3 = userService.addUser(createUser("User3"));
+//     У поьзователя 1 и пользователя 3 один общий взаимный друг - пользователь 2.
+        userService.addFriend(user1.getId(), user2.getId());
+        userService.addFriend(user2.getId(), user1.getId());
 
-        userService.addFriend(user1.getId(), friend1.getId());
-        userService.addFriend(user1.getId(), friend2.getId());
+        userService.addFriend(user3.getId(), user2.getId());
+        userService.addFriend(user2.getId(), user3.getId());
 
-        List<User> commonFriends = userService.getCommonFriends(friend1.getId(), friend2.getId());
+        List<User> commonFriends = userService.getCommonFriends(user1.getId(), user3.getId());
 
         assertEquals(1, commonFriends.size());
-        assertEquals(user1, commonFriends.get(0));
+        assertEquals(user2, commonFriends.get(0));
+//     У остальных общих друзей нет.
+        commonFriends = userService.getCommonFriends(user1.getId(), user2.getId());
+        assertEquals(0, commonFriends.size());
     }
 
     User createUser(String userName){

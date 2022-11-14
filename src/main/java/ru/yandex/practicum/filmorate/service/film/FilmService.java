@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,12 +41,12 @@ public class FilmService {
 
     public void addLike(Long filmId, Long userId) {
         Film film = findFilm(filmId);
-        film.getLikedUsers().add(userId);
+        film.getLikes().add(userId);
     }
 
     public void removeLike(Long filmId, Long userId) {
         Film film = findFilm(filmId);
-        if(!film.getLikedUsers().remove(userId))
+        if(!film.getLikes().remove(userId))
             throw new NotFoundException(useType(LIKES));
     }
 
@@ -55,7 +54,7 @@ public class FilmService {
         return getAll()
                 .stream()
                 .sorted((film1, film2) ->
-                        Integer.compare(film2.getLikedUsers().size(), film1.getLikedUsers().size()))
+                        Integer.compare(film2.getLikes().size(), film1.getLikes().size()))
                 .limit(count)
                 .collect(Collectors.toList());
     }

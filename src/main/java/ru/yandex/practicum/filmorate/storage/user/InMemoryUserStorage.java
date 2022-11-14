@@ -15,11 +15,12 @@ import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorTy
 @Component
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
-    private int userId;
+    private long userId;
+    private long inviteId;
     private final HashMap<Long, User> users = new HashMap<>();
 
     @Override
-    public User add(User user) {
+    public User addUser(User user) {
         User userToMemory = User.builder()
                 .email(user.getEmail())
                 .login(user.getLogin())
@@ -33,7 +34,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User update(User user) {
+    public User updateUser(User user) {
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
             log.info("Информация о пользователе успешно обновлена");
@@ -44,7 +45,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User remove(Long id) {
+    public User removeUser(Long id) {
         if (users.containsKey(id)) {
             log.info("Удаление фильма прошло успешно.");
             return users.remove(id);
@@ -53,7 +54,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User find(Long id) {
+    public User findUser(Long id) {
         if (users.containsKey(id)) {
             log.info("Пользователь успешно найден");
             return users.get(id);
@@ -62,7 +63,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getAll() {
+    public List<User> getAllUsers() {
         log.info("Список пользователей успешно получен");
         return new ArrayList<>(users.values());
     }
