@@ -8,13 +8,12 @@ import ru.yandex.practicum.filmorate.service.film.FilmService;
 import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.yandex.practicum.filmorate.model.utils.Genre.COMEDY;
+import static ru.yandex.practicum.filmorate.model.utils.Genre.DRAMA;
 import static ru.yandex.practicum.filmorate.model.utils.Rating.PG13;
 
 public class FilmServiceTest {
@@ -55,7 +54,7 @@ public class FilmServiceTest {
                 .description("Updated film")
                 .duration(90)
                 .releaseDate(LocalDate.of(1985, 12, 1))
-                .genre(COMEDY.getGenre())
+                .genres(List.of(COMEDY.getGenre(), DRAMA.getGenre()))
                 .rating(PG13.getRating())
                 .build();
 
@@ -187,7 +186,7 @@ public class FilmServiceTest {
                 .description("Film for test")
                 .duration(90)
                 .releaseDate(LocalDate.of(1985, 12, 1))
-                .genre(COMEDY.getGenre())
+                .genres(List.of(COMEDY.getGenre()))
                 .rating(PG13.getRating())
                 .build();
     }

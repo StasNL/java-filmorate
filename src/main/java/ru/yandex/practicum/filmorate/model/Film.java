@@ -11,6 +11,7 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -39,11 +40,8 @@ public class Film {
     @Positive(message = "Duration should be positive natural digit.")
     private int duration;
 
-    @NonNull
-    @RightGenre
-    private String genre;
+    private List<@RightGenre String> genres;
 
-    @NonNull
     @RightRating
     private String rating;
 

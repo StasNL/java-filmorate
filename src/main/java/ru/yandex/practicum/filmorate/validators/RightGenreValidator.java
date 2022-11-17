@@ -10,7 +10,7 @@ public class RightGenreValidator implements ConstraintValidator<RightGenre, Stri
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-        if(s == null)
+        if(s == null || s.equals(""))
             return true;
         return Genre.isGenre(s);
     }

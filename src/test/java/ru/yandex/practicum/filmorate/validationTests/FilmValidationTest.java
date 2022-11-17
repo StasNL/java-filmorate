@@ -7,10 +7,13 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.*;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static ru.yandex.practicum.filmorate.model.utils.Genre.COMEDY;
+import static ru.yandex.practicum.filmorate.model.utils.Rating.PG13;
 
 public class FilmValidationTest {
 
@@ -24,6 +27,8 @@ public class FilmValidationTest {
                 .description("Description")
                 .releaseDate(LocalDate.of(1985,12,1))
                 .duration(90)
+                .rating(PG13.getRating())
+                .genres(List.of(COMEDY.getGenre()))
                 .build();
         Throwable thrown = assertThrows(ConstraintViolationException.class, () -> validate(film));
         String errorMessage = thrown.getMessage().split(":")[1].trim();
@@ -90,8 +95,10 @@ public class FilmValidationTest {
     }
 
     public void validate(Film film) {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
+        Validator validator;
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+            validator = factory.getValidator();
+        }
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
