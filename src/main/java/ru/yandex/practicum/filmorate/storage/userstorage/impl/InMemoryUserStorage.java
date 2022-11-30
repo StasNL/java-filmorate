@@ -1,18 +1,20 @@
-package ru.yandex.practicum.filmorate.storage.user;
+package ru.yandex.practicum.filmorate.storage.userstorage.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.userstorage.UserStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorType.USER;
 import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorType.useType;
 
-@Component
+@Component("InMemoryUserStorage")
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
     private long userId;
@@ -20,7 +22,7 @@ public class InMemoryUserStorage implements UserStorage {
     private final HashMap<Long, User> users = new HashMap<>();
 
     @Override
-    public User addUser(User user) {
+    public Optional<User> addUser(User user) {
         User userToMemory = User.builder()
                 .email(user.getEmail())
                 .login(user.getLogin())
@@ -30,34 +32,34 @@ public class InMemoryUserStorage implements UserStorage {
                 .build();
         users.put(userToMemory.getId(), userToMemory);
         log.info("Пользователь успешно зарегистрирован.");
-        return userToMemory;
+        return Optional.of(userToMemory);
     }
 
     @Override
-    public User updateUser(User user) {
+    public Optional<User> updateUser(User user) {
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
             log.info("Информация о пользователе успешно обновлена");
         } else {
             throw new NotFoundException(useType(USER));
         }
-        return user;
+        return Optional.of(user);
     }
 
     @Override
-    public User removeUser(Long id) {
+    public void removeUser(Long id) {
         if (users.containsKey(id)) {
             log.info("Удаление фильма прошло успешно.");
-            return users.remove(id);
+            users.remove(id);
         } else
             throw new NotFoundException(useType(USER));
     }
 
     @Override
-    public User findUser(Long id) {
+    public Optional<User> findUserById(Long id) {
         if (users.containsKey(id)) {
             log.info("Пользователь успешно найден");
-            return users.get(id);
+            return Optional.of(users.get(id));
         } else
             throw new NotFoundException(useType(USER));
     }
