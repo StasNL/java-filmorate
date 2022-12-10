@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service.film;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -19,38 +20,27 @@ import java.util.stream.Collectors;
 import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorType.*;
 
 @Service
+@AllArgsConstructor(onConstructor_ = @Autowired)
 public class FilmService {
 
-    FilmStorage filmStorage;
-    GenresDbStorage genresDbStorage;
+    private final @Qualifier("FilmDbStorage") FilmStorage filmStorage;
+    private final GenresDbStorage genresDbStorage;
     private final MpaDbStorage mpa;
     private final LikesDbStorage likes;
 
-    @Autowired
-    public FilmService(@Qualifier("FilmDbStorage") FilmStorage filmStorage,
-                       GenresDbStorage genresDbStorage,
-                       MpaDbStorage mpa,
-                       LikesDbStorage likes) {
-        this.filmStorage = filmStorage;
-        this.genresDbStorage = genresDbStorage;
-        this.mpa = mpa;
-        this.likes = likes;
-    }
-
-    public Optional<Film> add(Film film){
+    public Optional<Film> addFilm(Film film) {
         return filmStorage.addFilm(film);
     }
-    public Optional<Film> update(Film film){
+
+    public Optional<Film> updateFilm(Film film) {
         return filmStorage.updateFilm(film);
     }
-    public void remove(Long filmId){
-        filmStorage.removeFilm(filmId);
-    }
-    public Optional<Film> findFilm(Long filmId){
+
+    public Optional<Film> findFilm(Long filmId) {
         return filmStorage.findFilmById(filmId);
     }
 
-    public List<Film> getAll() {
+    public List<Film> getAllFilms() {
         return filmStorage.getAllFilms();
     }
 
@@ -60,34 +50,33 @@ public class FilmService {
 
     public void removeLike(Long filmId, Long userId) {
         Film film = findFilm(filmId).orElseThrow(() -> new NotFoundException(useType(FILM)));
-        if(!film.getLikes().remove(userId))
+        if (!film.getLikes().remove(userId))
             throw new NotFoundException(useType(LIKES));
-        update(film);
+        updateFilm(film);
     }
 
     public List<Film> getPopularFilms(Integer count) {
-        List<Film> films = getAll()
+        return getAllFilms()
                 .stream()
                 .sorted((film1, film2) ->
                         Integer.compare(film2.getLikes().size(), film1.getLikes().size()))
                 .limit(count)
                 .collect(Collectors.toList());
-        return films;
     }
 
-    public Mpa getMPAById (Integer mpaId) {
+    public Mpa getMPAById(Integer mpaId) {
         return mpa.getMpaById(mpaId);
     }
 
-    public List<Mpa> getAllMPA () {
+    public List<Mpa> getAllMPA() {
         return mpa.getAllMpa();
     }
 
-    public Genre getGenreById (Integer genreId) {
+    public Genre getGenreById(Integer genreId) {
         return genresDbStorage.getGenreById(genreId);
     }
 
-    public List<Genre> getGenres () {
+    public List<Genre> getGenres() {
         return genresDbStorage.getAllGenres();
     }
 }

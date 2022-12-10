@@ -1,22 +1,18 @@
 package ru.yandex.practicum.filmorate.storage.filmstorage.impl.db;
 
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
 @Component
+@AllArgsConstructor(onConstructor_ = @Autowired)
 public class LikesDbStorage {
     private final JdbcTemplate jdbcTemplate;
-
-    LikesDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     /**
      * Добавляет лайк к фильму.

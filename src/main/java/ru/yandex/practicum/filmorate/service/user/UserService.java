@@ -1,26 +1,22 @@
 package ru.yandex.practicum.filmorate.service.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.userstorage.UserStorage;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorType.*;
-import static ru.yandex.practicum.filmorate.model.utils.FriendStatus.*;
 
 @Service
+@AllArgsConstructor
 public class UserService {
-    UserStorage userStorage;
-
-    @Autowired
-    public UserService(@Qualifier("UserDbStorage") UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
+    private final @Qualifier("UserDbStorage") UserStorage userStorage;
 
     public Optional<User> addUser(User user) {
         return userStorage.addUser(user);
@@ -28,10 +24,6 @@ public class UserService {
 
     public Optional<User> updateUser(User user) {
         return userStorage.updateUser(user);
-    }
-
-    public void removeUser(Long id) {
-        userStorage.removeUser(id);
     }
 
     public Optional<User> findUser(Long id) {
@@ -65,9 +57,7 @@ public class UserService {
         return user.getFriends()
                 .stream()
                 .map(this::findUser)
-                .map(opt -> {
-                    return opt.orElseThrow(() -> new NotFoundException(useType(USER)));
-                })
+                .map(opt -> opt.orElseThrow(() -> new NotFoundException(useType(USER))))
                 .collect(Collectors.toList());
     }
 

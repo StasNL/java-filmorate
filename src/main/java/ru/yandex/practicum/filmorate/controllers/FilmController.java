@@ -24,17 +24,17 @@ public class FilmController {
 
     @PostMapping("/films")
     public Optional<Film> addFilm(@Valid @RequestBody Film film) {
-        return filmService.add(film);
+        return filmService.addFilm(film);
     }
 
     @PutMapping("/films")
     public Optional<Film> updateFilm(@Valid @RequestBody Film film) {
-        return filmService.update(film);
+        return filmService.updateFilm(film);
     }
 
     @GetMapping("/films")
     public List<Film> getAllFilms() {
-        return filmService.getAll();
+        return filmService.getAllFilms();
     }
 
     @GetMapping("/films/{id}")

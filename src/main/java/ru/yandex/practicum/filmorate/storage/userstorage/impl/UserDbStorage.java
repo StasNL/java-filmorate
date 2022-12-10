@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.userstorage.impl;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,16 +20,11 @@ import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorTy
 
 @Component("UserDbStorage")
 @Slf4j
+@AllArgsConstructor(onConstructor_ = @Autowired)
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
     FriendsDbStorage friends;
-
-    @Autowired
-    public UserDbStorage(JdbcTemplate jdbcTemplate, FriendsDbStorage friendStatus) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.friends = friendStatus;
-    }
 
     /**
      * Создаёт пользователя в базе данных и заполняет таблицу статусов друзей.
@@ -93,8 +89,8 @@ public class UserDbStorage implements UserStorage {
         String sqlQuery = "DELETE FROM users " +
                 "WHERE user_id = ?";
 
-        int index = jdbcTemplate.update(sqlQuery,userId);
-        if(index == 0)
+        int index = jdbcTemplate.update(sqlQuery, userId);
+        if (index == 0)
             throw new NotFoundException(useType(USER));
         log.info("Пользователь успешно удалён");
     }
@@ -114,7 +110,7 @@ public class UserDbStorage implements UserStorage {
             throw new NotFoundException(useType(USER));
         }
 
-        if(userFromDb == null)
+        if (userFromDb == null)
             throw new NotFoundException(useType(USER));
 
         log.info("Пользователь успешно найден");
@@ -132,7 +128,7 @@ public class UserDbStorage implements UserStorage {
         return jdbcTemplate.query(sqlQuery, this::rowMapToUser);
     }
 
-    private User rowMapToUser (ResultSet rs, int rowNum) throws SQLException {
+    private User rowMapToUser(ResultSet rs, int rowNum) throws SQLException {
         long userId = rs.getLong("user_id");
         Set<Long> friendsFromDb = friends.getFriendsIdByUserId(userId);
         return User.builder()

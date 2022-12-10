@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.filmstorage.impl.db;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -10,18 +11,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorType.*;
 
 @Component
+@AllArgsConstructor(onConstructor_ = @Autowired)
 public class MpaDbStorage {
     JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public MpaDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     /**
      * Получает рейтинг из базы данных по id фильма.

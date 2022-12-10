@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.filmstorage.impl.db;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,7 +18,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorType.FILM;
 import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorType.useType;
@@ -30,8 +28,7 @@ import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorTy
 
 @Component("FilmDbStorage")
 @Slf4j
-@Getter
-@Setter
+@AllArgsConstructor(onConstructor_ = @Autowired)
 public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
@@ -39,19 +36,6 @@ public class FilmDbStorage implements FilmStorage {
     private final FilmGenresMatchingDbStorage filmGenreMatch;
     private final LikesDbStorage likes;
     private final MpaDbStorage mpa;
-
-    @Autowired
-    public FilmDbStorage(JdbcTemplate jdbcTemplate,
-                         GenresDbStorage genresDbStorage,
-                         FilmGenresMatchingDbStorage filmGenreMatch,
-                         LikesDbStorage likesDbStorage,
-                         MpaDbStorage mpa) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.genres = genresDbStorage;
-        this.filmGenreMatch = filmGenreMatch;
-        this.likes = likesDbStorage;
-        this.mpa = mpa;
-    }
 
     /**
      * Создание фильма в базе данных с присвоением id, заполнением таблиц жанров и лайков.
@@ -118,21 +102,6 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     /**
-     * Удаление фильма по id.
-     */
-
-    @Override
-    public void removeFilm(Long filmId) {
-        String sqlQuery = "DELETE FROM films " +
-                "WHERE film_id = ?";
-        int index = jdbcTemplate.update(sqlQuery, filmId);
-        if (index == 0)
-            throw new NotFoundException(useType(FILM));
-
-        log.info("Фильм успешно удалён.");
-    }
-
-    /**
      * Возвращает фильм по id.
      */
 
@@ -171,15 +140,27 @@ public class FilmDbStorage implements FilmStorage {
         Set<Long> likesFromDb = likes.getLikesByFilmId(filmId);
         Mpa mpaFromDb = mpa.getMpaByFilmId(filmId);
 
-        return Film.builder()
-                .id(filmId)
-                .name(rs.getString("name"))
-                .description(rs.getString("description"))
-                .releaseDate(rs.getDate("release_date").toLocalDate())
-                .duration(rs.getInt("duration"))
-                .mpa(mpaFromDb)
-                .genres(genreFromDb)
-                .likes(likesFromDb)
-                .build();
+        Film film = new Film();
+        film.setId(filmId);
+        film.setName(rs.getString("name"));
+        film.setDescription(rs.getString("description"));
+        film.setReleaseDate(rs.getDate("release_date").toLocalDate());
+        film.setDuration(rs.getInt("duration"));
+            film.setGenres(genreFromDb);
+        film.setLikes(likesFromDb);
+        film.setMpa(mpaFromDb);
+        return film;
+
+
+//        return Film.builder()
+//                .id(filmId)
+//                .name(rs.getString("name"))
+//                .description(rs.getString("description"))
+//                .releaseDate(rs.getDate("release_date").toLocalDate())
+//                .duration(rs.getInt("duration"))
+//                .mpa(mpaFromDb)
+//                .genres(genreFromDb)
+//                .likes(likesFromDb)
+//                .build();
     }
 }

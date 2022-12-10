@@ -1,22 +1,19 @@
 package ru.yandex.practicum.filmorate.storage.userstorage.impl;
 
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Component
+@AllArgsConstructor(onConstructor_ = @Autowired)
 public class FriendsDbStorage {
 
     JdbcTemplate jdbcTemplate;
-
-    public FriendsDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     /**
      * Заполнение списка друзей пользователя.
@@ -53,9 +50,7 @@ public class FriendsDbStorage {
         String sqlQuery = "SELECT friend_id FROM friends " +
                 "WHERE user_id = ?";
 
-        return new HashSet<>(jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
-            return rs.getLong("friend_id");
-        }, userId));
+        return new HashSet<>(jdbcTemplate.query(sqlQuery, (rs, rowNum) -> rs.getLong("friend_id"), userId));
     }
 }
 

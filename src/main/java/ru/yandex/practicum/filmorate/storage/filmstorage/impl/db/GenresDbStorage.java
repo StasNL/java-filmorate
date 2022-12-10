@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.filmstorage.impl.db;
 
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException.NotFoundException;
@@ -8,18 +10,14 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorType.GENRE;
 import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorType.useType;
 
 @Component
+@AllArgsConstructor(onConstructor_ = @Autowired)
 public class GenresDbStorage {
     private final JdbcTemplate jdbcTemplate;
-
-    public GenresDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     /**
      * Получает список жанров по id фильма.
@@ -61,6 +59,7 @@ public class GenresDbStorage {
 
     /**
      * Проверяет входящее значение id жанра на вхождение в поле значений.
+     *
      * @return - true, если не входит, false - если входит.
      */
     private boolean checkGenreId(int genreId) {
