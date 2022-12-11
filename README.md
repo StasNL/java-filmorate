@@ -1,7 +1,7 @@
 # java-filmorate
 Template repository for Filmorate project.
 
-![Схема базы данных](src/images/diagram.png)
+![Схема базы данных](src/images/db-schema.png)
 
 Примеры запросов основных операций:
 1. Получение всех фильмов: <br>

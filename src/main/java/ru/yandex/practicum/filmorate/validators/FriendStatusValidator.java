@@ -13,7 +13,7 @@ public class FriendStatusValidator implements ConstraintValidator<CorrectFriendS
                            ConstraintValidatorContext constraintValidatorContext) {
         if (status == null || status.equals(""))
             return true;
-        return !FriendStatus.isFriendStatus(status);
+        return FriendStatus.isFriendStatus(status);
     }
 }
 

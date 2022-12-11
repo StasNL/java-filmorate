@@ -1,8 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
-import org.springframework.lang.Nullable;
-import ru.yandex.practicum.filmorate.annotations.CorrectFriendStatus;
 import ru.yandex.practicum.filmorate.annotations.NotWhiteSpace;
 
 import javax.validation.constraints.*;
@@ -34,13 +32,11 @@ public class User {
     @PastOrPresent(message = "Birthday shouldn't be in the future")
     private LocalDate birthday;
 
-    private Map<Long,
-            @CorrectFriendStatus(message = "Kinds of relations: Subscribed, Subscription and friend")
-                    String> relations = new HashMap<>();
+    private Set<Long> friends;
 
     public String checkName() {
         if (name == null || name.isEmpty()) {
-            name = login;
+            this.name = login;
         }
         return name;
     }

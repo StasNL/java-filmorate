@@ -2,8 +2,6 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
 import ru.yandex.practicum.filmorate.annotations.DateAfter;
-import ru.yandex.practicum.filmorate.annotations.RightGenre;
-import ru.yandex.practicum.filmorate.annotations.RightRating;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
@@ -11,6 +9,7 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -37,15 +36,11 @@ public class Film {
 
     @NonNull
     @Positive(message = "Duration should be positive natural digit.")
-    private int duration;
+    private Integer duration;
 
-    @NonNull
-    @RightGenre
-    private String genre;
+    private Set<Genre> genres;
 
-    @NonNull
-    @RightRating
-    private String rating;
+    private Mpa mpa;
 
-    private final Set<Long> likes = new HashSet<>();
+    private Set<Long> likes = new HashSet<>();
 }

@@ -1,9 +1,10 @@
-package ru.yandex.practicum.filmorate.storage.film;
+package ru.yandex.practicum.filmorate.storage.filmstorage.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.filmstorage.FilmStorage;
 
 import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorType.FILM;
 import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorType.useType;
@@ -11,61 +12,52 @@ import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorTy
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
-@Component
+@Component("InMemoryFilmStorage")
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
     private int filmId;
     private final HashMap<Long, Film> films = new HashMap<>();
 
     @Override
-    public Film add(Film film) {
+    public Optional<Film> addFilm(Film film) {
         Film filmToMemory = Film.builder()
                 .name(film.getName())
                 .description(film.getDescription())
                 .releaseDate(film.getReleaseDate())
                 .duration(film.getDuration())
-                .genre(film.getGenre())
-                .rating(film.getRating())
+                .genres(film.getGenres())
+                .mpa(film.getMpa())
                 .id(++filmId)
                 .build();
         films.put(filmToMemory.getId(), filmToMemory);
         log.info("Фильм успешно добавлен");
-        return filmToMemory;
+        return Optional.of(filmToMemory);
     }
 
     @Override
-    public Film update(Film film) {
+    public Optional<Film> updateFilm(Film film) {
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
             log.info("Обновление фильма прошло успешно");
         } else {
             throw new NotFoundException(useType(FILM));
         }
-        return film;
+        return Optional.of(film);
     }
 
     @Override
-    public Film remove(Film film) {
-        if (films.containsKey(film.getId())) {
-            films.remove(film.getId());
-            log.info("Удаление фильма прошло успешно.");
-        } else
-            throw new NotFoundException(useType(FILM));
-        return film;
-    }
-
-    @Override
-    public Film find(Long id) {
+    public Optional<Film> findFilmById(Long id) {
         if (films.containsKey(id)) {
             log.info("Фильм успешно найден");
-            return films.get(id);
+            return Optional.ofNullable(films.get(id));
         } else
             throw new NotFoundException(useType(FILM));
     }
 
     @Override
-    public List<Film> getAll() {
+    public List<Film> getAllFilms() {
         log.info("Список фильмов успешно получен");
         return new ArrayList<>(films.values());
     }
