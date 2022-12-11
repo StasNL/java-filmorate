@@ -24,7 +24,7 @@ import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorTy
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    FriendsDbStorage friends;
+    private FriendsDbStorage friends;
 
     /**
      * Создаёт пользователя в базе данных и заполняет таблицу статусов друзей.
@@ -78,21 +78,6 @@ public class UserDbStorage implements UserStorage {
 
         log.info("Данные пользователя успешно обновлены.");
         return Optional.of(user);
-    }
-
-    /**
-     * Удаление пользователя по id.
-     */
-
-    @Override
-    public void removeUser(Long userId) {
-        String sqlQuery = "DELETE FROM users " +
-                "WHERE user_id = ?";
-
-        int index = jdbcTemplate.update(sqlQuery, userId);
-        if (index == 0)
-            throw new NotFoundException(useType(USER));
-        log.info("Пользователь успешно удалён");
     }
 
     /**

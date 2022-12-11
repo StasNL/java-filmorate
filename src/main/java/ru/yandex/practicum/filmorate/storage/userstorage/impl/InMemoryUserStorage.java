@@ -18,7 +18,7 @@ import static ru.yandex.practicum.filmorate.exceptions.NotFoundException.ErrorTy
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
     private long userId;
-    private long inviteId;
+    
     private final HashMap<Long, User> users = new HashMap<>();
 
     @Override
@@ -44,15 +44,6 @@ public class InMemoryUserStorage implements UserStorage {
             throw new NotFoundException(useType(USER));
         }
         return Optional.of(user);
-    }
-
-    @Override
-    public void removeUser(Long id) {
-        if (users.containsKey(id)) {
-            log.info("Удаление фильма прошло успешно.");
-            users.remove(id);
-        } else
-            throw new NotFoundException(useType(USER));
     }
 
     @Override
